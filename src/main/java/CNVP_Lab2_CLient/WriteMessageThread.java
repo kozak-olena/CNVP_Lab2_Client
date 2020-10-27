@@ -11,7 +11,8 @@ public class WriteMessageThread extends Thread {
             String inputMessage;
 
             try {
-                inputMessage = Client.in.readLine();
+                System.out.println("write");
+                inputMessage = Client.inputUser.readLine();
                 if (inputMessage.equals("stop")) {
                     Client.out.write("stop" + "\n");
                     break;
