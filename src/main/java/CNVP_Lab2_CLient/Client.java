@@ -26,24 +26,27 @@ public class Client {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             clientInput = new BufferedReader(new InputStreamReader(System.in));
-            String name = UserInput.inputYourName();
-            UserNameHandler.getSerializedName(name);
+            String userName = UserName.inputYourName();
+            writer.write(UserNameHandler.getSerializedName(userName) + "\n");
+            writer.flush();
+            String receivedConnectionData = reader.readLine();
+            OperationDispatch.dispatch(receivedConnectionData);
             readMessageThread.start();
             writeMessageThread.start();
+
+
         } catch (IOException exception) {
             exception.printStackTrace();
-        } finally {
-            Client.downService(socket);
         }
-
     }
 
-    private static void downService(Socket socket) {
+    public static void downService(Socket socket) {
         try {
             if (!socket.isClosed()) {
+                Client.reader.close();
+                Client.writer.close();
                 socket.close();
-                reader.close();
-                writer.close();
+                System.out.println("client is closed");
             }
         } catch (IOException ignored) {
         }

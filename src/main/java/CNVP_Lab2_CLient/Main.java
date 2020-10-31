@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class Main {
+
     public static void main(String[] args) {
 
         Socket socket = null;
@@ -14,22 +15,18 @@ public class Main {
                 socket = Client.createSocket(ipAddressOfServer);
                 Client.startReadAndWriteThread(socket);
 
-            } finally {
-                if (socket != null) {
-                    socket.close();
-                    System.out.println("client is closed");
+                try {
+                    Client.writeMessageThread.join();
+                    Client.readMessageThread.join();
+                    System.out.println("here again");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+            } finally {
+                Client.downService(socket);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-        try {
-            Client.writeMessageThread.join();
-            Client.readMessageThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 }

@@ -4,13 +4,22 @@ import java.time.Instant;
 
 public class MessageServerRequest {
     public String data;
-    public String userName = UserInput.name;
-    public Instant timestamp = Instant.now();
+    public String userName = UserName.name;
+
+    public String getDataTime() {
+        return dataTime;
+    }
+
+    public void setDataTime(String dataTime) {
+        this.dataTime = dataTime;
+    }
+
+    public String dataTime;
 
     @Override
     public String toString() {
-        return data + '\'' + userName + '\'' + timestamp;
-    }
+        return "[" + dataTime + "]" + userName + ":" + data;
+    } //TODO:DATATiME
 
     public String getData() {
         return data;

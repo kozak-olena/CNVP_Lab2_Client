@@ -1,6 +1,8 @@
 package CNVP_Lab2_CLient;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 public class UserConnectionServerRequest {
     public String getUserName() {
@@ -12,10 +14,19 @@ public class UserConnectionServerRequest {
     }
 
     public String userName;
-    public Instant timestamp = Instant.now();
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String dateTime;
 
     @Override
     public String toString() {
-        return timestamp + " Hello, my username is:" + userName;
+        return "[" + dateTime + "]" + "<" + userName + ">" + " just connected to chat";
     }
 }

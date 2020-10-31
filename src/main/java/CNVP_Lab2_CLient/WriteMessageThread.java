@@ -6,26 +6,47 @@ import java.io.*;
 
 public class WriteMessageThread extends Thread {
 
+    public  static boolean status =true;
+
     @Override
     public void run() {
-
-        String inputMessage;
         try {
+            String inputMessage;
             while (true) {
-                System.out.println("write your message");
+                //System.out.println("write your message");
                 inputMessage = Client.clientInput.readLine();
                 if (inputMessage.equals("stop")) {
+                    String data = SendData.getDataToSend(inputMessage);
+                    send(data + "\n");
+                    status = getStatus(inputMessage);
+
                     break;
+                } else {
+                    String data = SendData.getDataToSend(inputMessage);
+                    send(data + "\n");
                 }
             }
-            String data = SendData.getDataToSend(inputMessage);
-            Client.writer.write(data);
-            Client.writer.flush();
+
         } catch (JsonProcessingException exception) {
             exception.printStackTrace();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
     }
+
+    public static boolean getStatus(String input) throws IOException {
+        if (input.equals("stop")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static void send(String data) throws IOException {
+        Client.writer.write(data);
+        Client.writer.flush();
+    }
+
+
 }
 

@@ -9,10 +9,14 @@ public class ReadMessageThread extends Thread {
         String received;
 
         while (true) {
-            System.out.println("waiting for received from server");
             try {
                 received = Client.reader.readLine();
                 OperationDispatch.dispatch(received);
+                boolean status = true;
+                status = WriteMessageThread.status;
+                if (status == false) {
+                    break;
+                }
             } catch (IOException exception) {
                 exception.printStackTrace();
             }

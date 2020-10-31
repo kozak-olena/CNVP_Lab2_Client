@@ -1,20 +1,29 @@
 package CNVP_Lab2_CLient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 
 public class OperationDispatch {
     public static void dispatch(String receivedData) throws IOException {
-        String operation = JsonParser.deserializeOperation(receivedData);
+        // String operation = JsonParser.deserializeOperation(receivedData);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode json = objectMapper.readTree(receivedData);
+        String operation = json.get("operation").textValue();
+        String data = json.get("data").toString();
         if (operation.equals("UserConnection")) {
-            UserConnectedHandler(receivedData);
+            UserConnectedHandler(data);
         } else if (operation.equals("Message")) {
-            MessageHandler(receivedData);
+            MessageHandler(data);
         } else if (operation.equals("Disconnect")) {
-            DisconnectionRequest(receivedData);
+            DisconnectionRequest(data);
         } else {
             throw new UnsupportedOperationException();
         }
     }
+
+
 
     public static void UserConnectedHandler(String receivedData) throws IOException {
         UserConnectionServerRequest userConnectionServerRequest = JsonParser.deserializeUserConnectionRequest(receivedData);

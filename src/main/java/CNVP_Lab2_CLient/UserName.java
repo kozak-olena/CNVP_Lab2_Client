@@ -1,10 +1,8 @@
 package CNVP_Lab2_CLient;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.IOException;
 
-public class UserInput {
+public class UserName {
     public static String name;
 
     public static String inputYourName() {
