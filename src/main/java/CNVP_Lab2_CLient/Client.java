@@ -3,6 +3,8 @@ package CNVP_Lab2_CLient;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class Client {
 
@@ -11,41 +13,46 @@ public class Client {
     public static BufferedReader clientInput;
     public static ReadMessageThread readMessageThread = new ReadMessageThread();
     public static WriteMessageThread writeMessageThread = new WriteMessageThread();
+    public static Socket clientSocket;
+    public static boolean isShutdownRequested;
 
-    public static Socket createSocket(InetAddress ipAddress) throws IOException {
 
-        Socket clientSocket = new Socket(ipAddress, 5542);
-        if (clientSocket.isConnected()) {
-            System.out.println("Connected to server" + "\n");
-        }
-        return clientSocket;
-    }
-
-    public static void startReadAndWriteThread(Socket socket) {
+    public static void startReadAndWriteThread() throws IOException {
         try {
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            InetAddress ipAddressOfServer = InetAddressInput.getInetAddress();
+            clientSocket = new Socket(ipAddressOfServer, 5555);
+            if (clientSocket.isConnected()) {
+                System.out.println("Connected to server" + "\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Socket failed");
+        }
+        try {
+            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             clientInput = new BufferedReader(new InputStreamReader(System.in));
             String userName = UserName.inputYourName();
+            //TODO: validation is stream or server alive
             writer.write(UserNameHandler.getSerializedName(userName) + "\n");
             writer.flush();
-            String receivedConnectionData = reader.readLine();
-            OperationDispatch.dispatch(receivedConnectionData);
             readMessageThread.start();
             writeMessageThread.start();
 
-
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        } catch (IOException ex) {
+            if (!reader.ready()) {
+                System.out.println("server closed connection");
+            } else {
+                ex.printStackTrace();
+            }
         }
     }
 
-    public static void downService(Socket socket) {
+    public static void downService() {
         try {
-            if (!socket.isClosed()) {
+            if (!clientSocket.isClosed()) {
                 Client.reader.close();
                 Client.writer.close();
-                socket.close();
+                clientSocket.close();
                 System.out.println("client is closed");
             }
         } catch (IOException ignored) {

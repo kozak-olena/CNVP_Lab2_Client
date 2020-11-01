@@ -1,6 +1,7 @@
 package CNVP_Lab2_CLient;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 public class UserName {
     public static String name;
@@ -10,6 +11,7 @@ public class UserName {
         try {
             name = Client.clientInput.readLine();
         } catch (IOException exception) {
+            exception.printStackTrace();
         }
         return name;
     }
