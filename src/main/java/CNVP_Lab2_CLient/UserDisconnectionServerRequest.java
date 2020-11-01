@@ -1,9 +1,13 @@
 package CNVP_Lab2_CLient;
 
-import java.time.Instant;
-
 public class UserDisconnectionServerRequest {
-    public String userName = UserName.name;
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getDateTime() {
         return dateTime;
@@ -13,6 +17,7 @@ public class UserDisconnectionServerRequest {
         this.dateTime = dateTime;
     }
 
+    public String userName;
     public String dateTime;
 
     @Override

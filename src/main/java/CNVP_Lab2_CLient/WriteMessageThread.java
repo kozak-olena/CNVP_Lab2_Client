@@ -5,31 +5,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.*;
 
 public class WriteMessageThread extends Thread {
-
-    public static boolean status = true;
-
     @Override
     public void run() {
         try {
-            String inputMessage;
             while (true) {
-
-                inputMessage = readLine();
+                String inputMessage = readLine();
                 if (inputMessage.equals("stop")) {
-                    String data = SendData.getDataToSend(inputMessage);
-                    send(data + "\n");
-                    status = getStatus(inputMessage);
-
+                    SendDataService.sendMessage(inputMessage);
+                    Client.isShutdownRequested = true;
                     break;
                 } else {
-                    String data = SendData.getDataToSend(inputMessage);
-                    send(data + "\n");
+                    SendDataService.sendMessage(inputMessage);
                 }
             }
         } catch (InterruptedIOException exception) {
             System.out.println("User input listener thread stopped");
-        } catch (JsonProcessingException exception) {
-            exception.printStackTrace();
         } catch (IOException exception) {
             if (!Client.clientSocket.isConnected()) {
                 System.out.println("server closed connection");
@@ -54,25 +44,9 @@ public class WriteMessageThread extends Thread {
                 s += (char) c;
             } else {
                 sleep(100);
-
             }
         }
         return s;
     }
-
-    public static boolean getStatus(String input) {
-        if (input.equals("stop")) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public static void send(String data) throws IOException {
-        Client.writer.write(data);
-        Client.writer.flush();
-    }
-
-
 }
 

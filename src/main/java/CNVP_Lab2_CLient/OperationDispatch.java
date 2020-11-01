@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public class OperationDispatch {
     public static void dispatch(String receivedData) throws IOException {
-        // String operation = JsonParser.deserializeOperation(receivedData);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode json = objectMapper.readTree(receivedData);
         String operation = json.get("operation").textValue();
@@ -19,10 +18,9 @@ public class OperationDispatch {
         } else if (operation.equals("Disconnect")) {
             DisconnectionRequest(data);
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("operation " + operation + " is not supported");
         }
     }
-
 
 
     public static void UserConnectedHandler(String receivedData) throws IOException {

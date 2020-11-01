@@ -3,59 +3,66 @@ package CNVP_Lab2_CLient;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.util.Scanner;
 
 public class Client {
 
     public static BufferedReader reader;
     public static BufferedWriter writer;
     public static BufferedReader clientInput;
-    public static ReadMessageThread readMessageThread = new ReadMessageThread();
-    public static WriteMessageThread writeMessageThread = new WriteMessageThread();
+
     public static Socket clientSocket;
     public static boolean isShutdownRequested;
 
-
-    public static void startReadAndWriteThread() throws IOException {
+    public static void run() {
         try {
-            InetAddress ipAddressOfServer = InetAddressInput.getInetAddress();
-            clientSocket = new Socket(ipAddressOfServer, 5555);
-            if (clientSocket.isConnected()) {
-                System.out.println("Connected to server" + "\n");
-            }
-        } catch (IOException e) {
-            System.err.println("Socket failed");
-        }
-        try {
+            createSocket();
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             clientInput = new BufferedReader(new InputStreamReader(System.in));
-            String userName = UserName.inputYourName();
-            //TODO: validation is stream or server alive
-            writer.write(UserNameHandler.getSerializedName(userName) + "\n");
-            writer.flush();
-            readMessageThread.start();
-            writeMessageThread.start();
 
+            UserNameHandler.LoginToServer();
+
+            ReadMessageThread readMessageThread = new ReadMessageThread();
+            readMessageThread.start();
+            WriteMessageThread writeMessageThread = new WriteMessageThread();
+            writeMessageThread.start();
+            try {
+                writeMessageThread.join();
+                readMessageThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } catch (IOException ex) {
-            if (!reader.ready()) {
-                System.out.println("server closed connection");
-            } else {
-                ex.printStackTrace();
+            ex.printStackTrace();
+        }
+        shutdown();
+    }
+
+    private static void createSocket() throws IOException {
+        if (clientSocket == null) {
+            InetAddress ipAddressOfServer = InetAddressInput.getInetAddress();
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("enter port");
+            int port = scanner.nextInt();
+            clientSocket = new Socket(ipAddressOfServer, port);
+            if (clientSocket.isConnected()) {
+                System.out.println("Connected to server" + "\n");
             }
         }
     }
 
-    public static void downService() {
+    private static void shutdown() {
         try {
             if (!clientSocket.isClosed()) {
-                Client.reader.close();
-                Client.writer.close();
                 clientSocket.close();
-                System.out.println("client is closed");
             }
-        } catch (IOException ignored) {
+            Client.reader.close();
+            Client.writer.close();
+            System.out.println("client is closed");
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 }
