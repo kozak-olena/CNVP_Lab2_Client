@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 
-
 public class UserNameHandler {
 
     private static String getSerializedName(String name) throws JsonProcessingException {

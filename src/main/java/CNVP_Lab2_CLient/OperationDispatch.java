@@ -22,7 +22,6 @@ public class OperationDispatch {
         }
     }
 
-
     public static void UserConnectedHandler(String receivedData) throws IOException {
         UserConnectionServerRequest userConnectionServerRequest = JsonParser.deserializeUserConnectionRequest(receivedData);
         System.out.println(userConnectionServerRequest.toString());

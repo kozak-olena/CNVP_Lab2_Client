@@ -1,7 +1,6 @@
 package CNVP_Lab2_CLient;
 
 import java.io.IOException;
-import java.net.SocketException;
 
 public class UserName {
     public static String name;

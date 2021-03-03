@@ -1,7 +1,5 @@
 package CNVP_Lab2_CLient;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.*;
 
 public class WriteMessageThread extends Thread {

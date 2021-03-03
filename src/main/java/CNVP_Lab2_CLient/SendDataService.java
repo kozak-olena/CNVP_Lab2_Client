@@ -27,7 +27,7 @@ public class SendDataService {
     }
 
     private static void send(String data) throws IOException {
-        Client.writer.write(data);
+        Client.writer.write(data+"\n");
         Client.writer.flush();
     }
 }
